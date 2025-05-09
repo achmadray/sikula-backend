@@ -26,7 +26,7 @@ class BarangMasukController extends Controller
             'tanggal_masuk' => 'required|date',
         ]);
 
-        $barangMasuk = Barang_Masuk::tambah($request->all());
+        $barangMasuk = Barang_Masuk::create($request->all());
         return response()->json($barangMasuk, 201);
     }
 

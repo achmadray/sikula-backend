@@ -20,7 +20,7 @@ class KategoriController extends Controller
             'nama_kategori' => 'required|string|max:100',
         ]);
 
-        $kategori = Kategori::tambah($request->all());
+        $kategori = Kategori::create($request->all());
         return response()->json($kategori, 201);
     }
 

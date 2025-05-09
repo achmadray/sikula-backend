@@ -26,7 +26,7 @@ class TransaksiController extends Controller
             'status_pembayaran' => 'required|in:pending,lunas,gagal',
         ]);
 
-        $transaksi = Transaksi::tambah($request->all());
+        $transaksi = Transaksi::create($request->all());
         return response()->json($transaksi, 201);
     }
 

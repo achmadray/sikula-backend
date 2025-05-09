@@ -22,7 +22,7 @@ class PenggunaController extends Controller
             'no_telpon' => 'nullable|string|max:20',
         ]);
 
-        $pengguna = Pengguna::tambah($request->all());
+        $pengguna = Pengguna::create($request->all());
 
         return response()->json([
             'message' => 'Pengguna berhasil ditambahkan',

@@ -22,7 +22,7 @@ class MenuController extends Controller
             'harga' => 'required|numeric',
         ]);
 
-        $menu = Menu::tambah($request->all());
+        $menu = Menu::create($request->all());
         return response()->json($menu, 201);
     }
 

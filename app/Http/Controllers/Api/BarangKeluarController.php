@@ -25,7 +25,7 @@ class BarangKeluarController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        $barangKeluar = Barang_Keluar::tambah($request->all());
+        $barangKeluar = Barang_Keluar::create($request->all());
         return response()->json($barangKeluar, 201);
     }
 

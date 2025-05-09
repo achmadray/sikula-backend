@@ -22,7 +22,7 @@ class SuplierController extends Controller
             'alamat' => 'required|string|max:255',
         ]);
 
-        $suplier = Suplier::tambah($request->all());
+        $suplier = Suplier::create($request->all());
         return response()->json($suplier, 201);
     }
 

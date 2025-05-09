@@ -23,7 +23,7 @@ class DetailTransaksiController extends Controller
             'total_harga' => 'required|numeric',
         ]);
 
-        $detailTransaksi = Detail_Transaksi::tambah($request->all());
+        $detailTransaksi = Detail_Transaksi::create($request->all());
         return response()->json($detailTransaksi, 201);
     }
 

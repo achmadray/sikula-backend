@@ -19,7 +19,7 @@ class SatuanController extends Controller
             'nama_satuan' => 'required|string|max:50',
         ]);
 
-        $satuan = Satuan::tambah($request->all());
+        $satuan = Satuan::create($request->all());
 
         return response()->json([
             'message' => 'Satuan berhasil ditambahkan',

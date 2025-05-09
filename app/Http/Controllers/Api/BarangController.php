@@ -24,7 +24,7 @@ class BarangController extends Controller
             'stok' => 'required|integer|min:0',
         ]);
 
-        $barang = Barang::tambah($request->all());
+        $barang = Barang::create($request->all());
 
         return response()->json([
             'message' => 'Barang berhasil ditambahkan',
