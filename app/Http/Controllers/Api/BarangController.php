@@ -8,14 +8,11 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-    // Menampilkan semua data barang
     public function index()
     {
         $barang = Barang::with(['satuan', 'pengguna'])->get();
         return response()->json($barang);
     }
-
-    // Menyimpan data barang baru
     public function store(Request $request)
     {
         $request->validate([
@@ -26,7 +23,6 @@ class BarangController extends Controller
             'stok' => 'required|integer|min:0',
         ]);
 
-        // Membuat barang baru
         $barang = Barang::create($request->all());
 
         return response()->json([
@@ -35,16 +31,13 @@ class BarangController extends Controller
         ], 201);
     }
 
-    // Menampilkan data barang berdasarkan ID
     public function show($id)
     {
-        // Menggunakan findOrFail untuk otomatis menangani error 404 jika data tidak ditemukan
-        $barang = Barang::with(['satuan', 'pengguna'])->findOrFail($id);
+         $barang = Barang::with(['satuan', 'pengguna'])->findOrFail($id);
 
         return response()->json($barang);
     }
 
-    // Memperbarui data barang
     public function update(Request $request, $id)
     {
         $barang = Barang::findOrFail($id);
@@ -65,7 +58,6 @@ class BarangController extends Controller
         ]);
     }
 
-    // Menghapus data barang
     public function destroy($id)
     {
         $barang = Barang::findOrFail($id);
