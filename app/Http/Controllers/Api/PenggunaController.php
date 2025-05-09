@@ -13,25 +13,28 @@ class PenggunaController extends Controller
         return response()->json(Pengguna::with('akun')->get());
     }
 
-public function store(Request $request)
-{
-    $request->validate([
-        'nama_pengguna' => 'required|string|max:100',
-        'email' => 'required|email|unique:pengguna,email',
-        'id_akun' => 'required|exists:akun,id',
-        'no_telpon' => 'nullable|string|max:20',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_pengguna' => 'required|string|max:100',
+            'email' => 'required|email|unique:pengguna,email',
+            'id_akun' => 'required|exists:akun,id',
+            'no_telpon' => 'nullable|string|max:20',
+        ]);
 
-    $pengguna = Pengguna::create($request->all());
+        try {
+            $pengguna = Pengguna::create($request->all());
 
-    return response()->json([
-        'message' => 'Pengguna berhasil ditambahkan',
-        'data' => $pengguna
-    ], 201);
-}
+            return response()->json([
+                'message' => 'Pengguna berhasil ditambahkan',
+                'data' => $pengguna
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
 
-
-    public function tampil($id)
+    public function show($id)
     {
         $pengguna = Pengguna::with('akun')->find($id);
 
@@ -49,34 +52,40 @@ public function store(Request $request)
         if (!$pengguna) {
             return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
         }
-        $request->validate([
-            'nama_pengguna' => 'required|string|max:100',
-            'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
-            'id_akun' => 'required|exists:akun,id',
-            'no_telpon' => 'nullable|string|max:20',
-        ]);
-        $pengguna->nama_pengguna = $request->nama_pengguna;
-        $pengguna->email = $request->email;
-        $pengguna->id_akun = $request->id_akun;
-        $pengguna->no_telpon = $request->no_telpon;
 
-        $pengguna->save();
+        try {
+            $request->validate([
+                'nama_pengguna' => 'required|string|max:100',
+                'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
+                'id_akun' => 'required|exists:akun,id',
+                'no_telpon' => 'nullable|string|max:20',
+            ]);
 
-        return response()->json([
-            'message' => 'Pengguna berhasil diperbarui',
-            'data' => $pengguna
-        ]);
+            $pengguna->update($request->all());
+
+            return response()->json([
+                'message' => 'Pengguna berhasil diperbarui',
+                'data' => $pengguna
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $pengguna = Pengguna::find($id);
+
         if (!$pengguna) {
             return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
         }
 
-        $pengguna->delete();
+        try {
+            $pengguna->delete();
 
-        return response()->json(['message' => 'Pengguna berhasil dihapus']);
+            return response()->json(['message' => 'Pengguna berhasil dihapus']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 }
