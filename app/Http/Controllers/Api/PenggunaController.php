@@ -50,46 +50,57 @@ class PenggunaController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
+{
+    try {
         $pengguna = Pengguna::find($id);
 
         if (!$pengguna) {
             return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
         }
 
-        try {
-            $request->validate([
-                'nama_pengguna' => 'required|string|max:100',
-                'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
-                'id_akun' => 'required|exists:akun,id',
-                'no_telpon' => 'nullable|string|max:20',
-            ]);
+        $request->validate([
+            'nama_pengguna' => 'required|string|max:100',
+            'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
+            'id_akun' => 'required|exists:akun,id',
+            'no_telpon' => 'nullable|string|max:20',
+        ]);
 
-            $pengguna->update($request->all());
+        $pengguna->nama_pengguna = $request->nama_pengguna;
+        $pengguna->email = $request->email;
+        $pengguna->id_akun = $request->id_akun;
+        $pengguna->no_telpon = $request->no_telpon;
+        $pengguna->save();
 
-            return response()->json([
-                'message' => 'Pengguna berhasil diperbarui',
-                'data' => $pengguna
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
-        }
+        return response()->json([
+            'message' => 'Pengguna berhasil diperbarui',
+            'data' => $pengguna
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
     }
+}
 
-    public function destroy($id)
-    {
+
+    public function delete($id)
+{
+    try {
         $pengguna = Pengguna::find($id);
 
         if (!$pengguna) {
             return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
         }
 
-        try {
-            $pengguna->delete();
+        $pengguna->delete();
 
-            return response()->json(['message' => 'Pengguna berhasil dihapus']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
-        }
+        return response()->json(['message' => 'Pengguna berhasil dihapus']);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
     }
+}
 }
