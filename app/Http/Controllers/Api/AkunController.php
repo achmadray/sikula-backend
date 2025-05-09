@@ -11,10 +11,10 @@ class AkunController extends Controller
 {
     public function index()
     {
-        return response()->json(Akun::all(), 200);
+        return response()->json(Akun::all());
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'username' => 'required|unique:akun,username',
@@ -34,14 +34,14 @@ class AkunController extends Controller
         ], 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
-        $akun = Akun::find($id); 
+        $akun = Akun::find($id);
         if (!$akun) {
             return response()->json(['message' => 'Akun tidak ditemukan'], 404);
         }
 
-        return response()->json($akun, 200);
+        return response()->json($akun);
     }
 
     public function update(Request $request, $id)
@@ -69,10 +69,10 @@ class AkunController extends Controller
         return response()->json([
             'message' => 'Akun berhasil diperbarui',
             'data' => $akun
-        ], 200);
+        ]);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $akun = Akun::find($id);
         if (!$akun) {
@@ -80,6 +80,6 @@ class AkunController extends Controller
         }
 
         $akun->delete();
-        return response()->json(['message' => 'Akun berhasil dihapus'], 200);
+        return response()->json(['message' => 'Akun berhasil dihapus']);
     }
 }
