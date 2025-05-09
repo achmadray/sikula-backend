@@ -21,7 +21,6 @@ class Akun extends Model
 
     protected $hidden = ['password'];
 
-    // Relasi ke tabel pengguna (optional)
     public function pengguna()
     {
         return $this->hasOne(Pengguna::class, 'id_akun');
