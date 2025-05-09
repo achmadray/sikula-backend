@@ -19,7 +19,7 @@ class PenggunaController extends Controller
         $request->validate([
             'nama_pengguna' => 'required|string|max:100',
             'email' => 'required|email|unique:pengguna,email',
-            'id_akun' => 'required|exists:akun,id',
+            'id_akun' => 'required|exists:akun,id_akun',
             'no_telpon' => 'nullable|string|max:20',
         ]);
 
