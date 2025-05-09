@@ -16,8 +16,7 @@ class Akun extends Model
     protected $fillable = [
         'username',
         'password',
-        'level',
-    ];
+        'level'];
 
     public function pengguna()
     {
