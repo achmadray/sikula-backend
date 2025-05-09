@@ -20,7 +20,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string|max:100',
             'id_satuan' => 'required|exists:satuan,id_satuan',
             'kode_barang' => 'required|string|max:50|unique:barang,kode_barang',
-            'id_pengguna' => 'required|exists:pengguna,id',
+            'id_pengguna' => 'required|exists:pengguna,id_pengguna',
             'stok' => 'required|integer|min:0',
         ]);
 
@@ -34,7 +34,7 @@ class BarangController extends Controller
 
     public function tampil($id)
     {
-        $barang = Barang::with(['satuan', 'pengguna'])->find($id);
+        $barang = Barang::with(['satuan', 'pengguna'])->where('id_barang', $id)->first();
 
         if (!$barang) {
             return response()->json(['message' => 'Barang tidak ditemukan'], 404);
@@ -45,7 +45,7 @@ class BarangController extends Controller
 
     public function update(Request $request, $id)
     {
-        $barang = Barang::find($id);
+        $barang = Barang::where('id_barang', $id)->first();
 
         if (!$barang) {
             return response()->json(['message' => 'Barang tidak ditemukan'], 404);
@@ -55,7 +55,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string|max:100',
             'id_satuan' => 'required|exists:satuan,id_satuan',
             'kode_barang' => 'required|string|max:50|unique:barang,kode_barang,' . $id . ',id_barang',
-            'id_pengguna' => 'required|exists:pengguna,id',
+            'id_pengguna' => 'required|exists:pengguna,id_pengguna',
             'stok' => 'required|integer|min:0',
         ]);
 
@@ -69,7 +69,7 @@ class BarangController extends Controller
 
     public function delete($id)
     {
-        $barang = Barang::find($id);
+        $barang = Barang::where('id_barang', $id)->first();
 
         if (!$barang) {
             return response()->json(['message' => 'Barang tidak ditemukan'], 404);
