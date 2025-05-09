@@ -11,6 +11,7 @@ class Akun extends Model
 
     protected $table = 'akun';
     protected $primaryKey = 'id_akun';
+    public $timestamps = false;
 
     protected $fillable = [
         'username',
@@ -20,6 +21,7 @@ class Akun extends Model
 
     protected $hidden = ['password'];
 
+    // Relasi ke tabel pengguna (optional)
     public function pengguna()
     {
         return $this->hasOne(Pengguna::class, 'id_akun');
