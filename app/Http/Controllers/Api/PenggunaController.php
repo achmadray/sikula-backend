@@ -14,7 +14,8 @@ class PenggunaController extends Controller
     }
 
     public function store(Request $request)
-    {
+{
+    try {
         $request->validate([
             'nama_pengguna' => 'required|string|max:100',
             'email' => 'required|email|unique:pengguna,email',
@@ -22,17 +23,20 @@ class PenggunaController extends Controller
             'no_telpon' => 'nullable|string|max:20',
         ]);
 
-        try {
-            $pengguna = Pengguna::create($request->all());
+        $pengguna = Pengguna::create($request->all());
 
-            return response()->json([
-                'message' => 'Pengguna berhasil ditambahkan',
-                'data' => $pengguna
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
-        }
+        return response()->json([
+            'message' => 'Pengguna berhasil ditambahkan',
+            'data' => $pengguna
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 
     public function show($id)
     {
