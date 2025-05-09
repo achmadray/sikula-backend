@@ -13,7 +13,7 @@ class PenggunaController extends Controller
         return response()->json(Pengguna::with('akun')->get());
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'nama_pengguna' => 'required|string|max:100',
