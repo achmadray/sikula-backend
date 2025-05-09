@@ -19,10 +19,8 @@ class Akun extends Model
         'level',
     ];
 
-    protected $hidden = ['password'];
-
     public function pengguna()
     {
-        return $this->hasOne(Pengguna::class, 'id_akun');
+        return $this->hasOne(Pengguna::class, 'id_akun', 'id_akun');
     }
 }
