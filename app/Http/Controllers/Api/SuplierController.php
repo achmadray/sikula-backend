@@ -14,7 +14,7 @@ class SuplierController extends Controller
         return response()->json($supliers);
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'nama_suplier' => 'required|string|max:255',
@@ -26,7 +26,7 @@ class SuplierController extends Controller
         return response()->json($suplier, 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
         $suplier = Suplier::find($id);
 
@@ -49,7 +49,7 @@ class SuplierController extends Controller
         return response()->json($suplier);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $suplier = Suplier::find($id);
 

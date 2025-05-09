@@ -14,7 +14,7 @@ class KategoriController extends Controller
         return response()->json($kategori);
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'nama_kategori' => 'required|string|max:100',
@@ -24,7 +24,7 @@ class KategoriController extends Controller
         return response()->json($kategori, 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
         $kategori = Kategori::find($id);
 
@@ -47,7 +47,7 @@ class KategoriController extends Controller
         return response()->json($kategori);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $kategori = Kategori::find($id);
 

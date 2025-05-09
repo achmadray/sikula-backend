@@ -14,7 +14,7 @@ class MenuController extends Controller
         return response()->json($menu);
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'id_kategori' => 'required|exists:kategori,id_kategori',
@@ -26,7 +26,7 @@ class MenuController extends Controller
         return response()->json($menu, 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
         $menu = Menu::find($id);
 
@@ -49,7 +49,7 @@ class MenuController extends Controller
         return response()->json($menu);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $menu = Menu::find($id);
 

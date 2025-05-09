@@ -14,7 +14,7 @@ class TransaksiController extends Controller
         return response()->json($transaksi);
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'id_pengguna' => 'required|exists:pengguna,id_pengguna',
@@ -30,7 +30,7 @@ class TransaksiController extends Controller
         return response()->json($transaksi, 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
         $transaksi = Transaksi::find($id);
 
@@ -53,7 +53,7 @@ class TransaksiController extends Controller
         return response()->json($transaksi);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $transaksi = Transaksi::find($id);
 

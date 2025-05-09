@@ -14,7 +14,7 @@ class BarangMasukController extends Controller
         return response()->json($barang_masuk);
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'id_suplier' => 'required|exists:suplier,id_suplier',
@@ -30,7 +30,7 @@ class BarangMasukController extends Controller
         return response()->json($barangMasuk, 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
         $barangMasuk = Barang_Masuk::find($id);
 
@@ -53,7 +53,7 @@ class BarangMasukController extends Controller
         return response()->json($barangMasuk);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $barangMasuk = Barang_Masuk::find($id);
 

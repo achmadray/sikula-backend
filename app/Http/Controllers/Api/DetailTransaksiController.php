@@ -14,7 +14,7 @@ class DetailTransaksiController extends Controller
         return response()->json($detail_transaksi);
     }
 
-    public function simpan(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'id_menu' => 'required|exists:menu,id_menu',
@@ -27,7 +27,7 @@ class DetailTransaksiController extends Controller
         return response()->json($detailTransaksi, 201);
     }
 
-    public function tampil($id)
+    public function show($id)
     {
         $detailTransaksi = Detail_Transaksi::find($id);
 
@@ -50,7 +50,7 @@ class DetailTransaksiController extends Controller
         return response()->json($detailTransaksi);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $detailTransaksi = Detail_Transaksi::find($id);
 
