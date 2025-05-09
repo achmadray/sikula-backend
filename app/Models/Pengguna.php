@@ -11,6 +11,7 @@ class Pengguna extends Model
 
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
+    public $timestamps = false;
 
     protected $fillable = [
         'nama_pengguna',
@@ -21,6 +22,6 @@ class Pengguna extends Model
 
     public function akun()
     {
-        return $this->belongsTo(Akun::class, 'id_akun');
+        return $this->belongsTo(Akun::class, 'id_akun', 'id_akun');
     }
 }
