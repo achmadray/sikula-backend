@@ -13,22 +13,23 @@ class PenggunaController extends Controller
         return response()->json(Pengguna::with('akun')->get());
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_pengguna' => 'required|string|max:100',
-            'email' => 'required|email|unique:pengguna,email',
-            'id_akun' => 'required|exists:akun,id',
-            'no_telpon' => 'nullable|string|max:20',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'nama_pengguna' => 'required|string|max:100',
+        'email' => 'required|email|unique:pengguna,email',
+        'id_akun' => 'required|exists:akun,id',
+        'no_telpon' => 'nullable|string|max:20',
+    ]);
 
-        $pengguna = Pengguna::create($request->all());
+    $pengguna = Pengguna::create($request->all());
 
-        return response()->json([
-            'message' => 'Pengguna berhasil ditambahkan',
-            'data' => $pengguna
-        ], 201);
-    }
+    return response()->json([
+        'message' => 'Pengguna berhasil ditambahkan',
+        'data' => $pengguna
+    ], 201);
+}
+
 
     public function tampil($id)
     {
