@@ -37,6 +37,16 @@ class PenggunaController extends Controller
     }
 }
 
+public function showByAkunId($id_akun)
+{
+    $pengguna = Pengguna::with('akun')->where('id_akun', $id_akun)->first();
+
+    if (!$pengguna) {
+        return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
+    }
+
+    return response()->json(['data' => $pengguna], 200);
+}
 
     public function show($id)
     {
