@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/profil/{id_akun}', [PenggunaController::class, 'showByAkunId']);
+Route::get('/profil/{id_akun}', [PenggunaController::class, 'profil']);
 Route::apiResource('akun', AkunController::class);
 Route::apiResource('barang', BarangController::class);
 Route::apiResource('satuan', SatuanController::class);

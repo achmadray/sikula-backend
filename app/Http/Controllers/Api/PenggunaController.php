@@ -37,7 +37,7 @@ class PenggunaController extends Controller
     }
 }
 
-public function showByAkunId($id_akun)
+public function profil($id_akun)
 {
     $pengguna = Pengguna::with('akun')->where('id_akun', $id_akun)->first();
 
