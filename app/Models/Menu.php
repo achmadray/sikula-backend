@@ -24,6 +24,6 @@ class Menu extends Model
 
     public function detailTransaksi()
     {
-        return $this->hasMany(DetailTransaksi::class, 'id_menu');
+        return $this->hasMany(Detail_Transaksi::class, 'id_menu');
     }
 }
