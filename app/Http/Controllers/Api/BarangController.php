@@ -14,22 +14,27 @@ class BarangController extends Controller
         return response()->json($barang);
     }
     public function store(Request $request)
-    {
-        $request->validate([
-            'nama_barang' => 'required|string|max:100',
-            'id_satuan' => 'required|exists:satuan,id_satuan',
-            'kode_barang' => 'required|string|max:50|unique:barang,kode_barang',
-            'id_pengguna' => 'required|exists:pengguna,id_pengguna',
-            'stok' => 'required|integer|min:0',
-        ]);
+{
+    $request->validate([
+        'nama_barang' => 'required|string|max:100',
+        'id_satuan' => 'required|exists:satuan,id_satuan',
+        'id_pengguna' => 'required|exists:pengguna,id_pengguna',
+        'stok' => 'required|integer|min:0',
+    ]);
+    $lastId = Barang::max('id_barang') ?? 0;
+    $nextId = $lastId + 1;
+    $kodeBarang = 'BRG-' . $nextId;
+    $data = $request->all();
+    $data['kode_barang'] = $kodeBarang;
 
-        $barang = Barang::create($request->all());
+    $barang = Barang::create($data);
 
-        return response()->json([
-            'message' => 'Barang berhasil ditambahkan',
-            'data' => $barang
-        ], 201);
-    }
+    return response()->json([
+        'message' => 'Barang berhasil ditambahkan',
+        'data' => $barang
+    ], 201);
+}
+
 
     public function show($id)
     {
