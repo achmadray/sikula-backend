@@ -23,7 +23,7 @@ class BarangController extends Controller
     ]);
     $lastId = Barang::max('id_barang') ?? 0;
     $nextId = $lastId + 1;
-    $kodeBarang = 'BRG-' . $nextId;
+    $kodeBarang = 'BRG-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
     $data = $request->all();
     $data['kode_barang'] = $kodeBarang;
 
