@@ -69,11 +69,11 @@ public function profil($id_akun)
         }
 
         $request->validate([
-            'nama_pengguna' => 'required|string|max:100',
-            'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
-            'id_akun' => 'required|exists:akun,id',
-            'no_telpon' => 'nullable|string|max:20',
-        ]);
+    'nama_pengguna' => 'required|string|max:100',
+    'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
+    'id_akun' => 'required|exists:akun,id_akun', // ✅ perbaiki di sini
+    'no_telpon' => 'nullable|string|max:20',
+]);
 
         $pengguna->nama_pengguna = $request->nama_pengguna;
         $pengguna->email = $request->email;
