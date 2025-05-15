@@ -11,14 +11,15 @@ class Suplier extends Model
 
     protected $table = 'suplier';
 
+    protected $primaryKey = 'id_suplier';
     protected $fillable = [
         'nama_suplier',
         'no_telpon',
         'alamat',
     ];
 
-    public function barangMasuk()
+    public function Barang_Masuk()
     {
-        return $this->hasMany(BarangMasuk::class, 'id_suplier');
+        return $this->hasMany(Barang_Masuk::class, 'id_suplier');
     }
 }

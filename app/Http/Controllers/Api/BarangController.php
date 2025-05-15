@@ -48,11 +48,11 @@ class BarangController extends Controller
         $barang = Barang::findOrFail($id);
 
         $request->validate([
-            'nama_barang' => 'required|string|max:100',
-            'id_satuan' => 'required|exists:satuan,id_satuan',
-            'kode_barang' => 'required|string|max:50|unique:barang,kode_barang,' . $id . ',id_barang',
-            'id_pengguna' => 'required|exists:pengguna,id_pengguna',
-            'stok' => 'required|integer|min:0',
+            'nama_barang' => 'string|max:100',
+            'id_satuan' => 'exists:satuan,id_satuan',
+            'kode_barang' => 'string|max:50|unique:barang,kode_barang,' . $id . ',id_barang',
+            'id_pengguna' => 'exists:pengguna,id_pengguna',
+            'stok' => 'integer|min:0',
         ]);
 
         $barang->update($request->all());
