@@ -13,7 +13,7 @@ class CreateDetailTransaksiTable extends Migration
             $table->unsignedBigInteger('id_menu');
             $table->unsignedBigInteger('id_transaksi');
             $table->integer('jumlah');
-            $table->decimal('total_harga', 15, 2); 
+            $table->decimal('total_harga', 15, 2);
             $table->timestamps();
 
             $table->foreign('id_menu')
