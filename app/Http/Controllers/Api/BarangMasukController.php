@@ -32,12 +32,10 @@ class BarangMasukController extends Controller
 
     public function show($id)
     {
-        $barangMasuk = Barang_Masuk::find($id);
-
+        $barangMasuk = Barang_Masuk::with(['barang','suplier'])->findOrFail($id);
         if (!$barangMasuk) {
             return response()->json(['message' => 'Barang Masuk not found'], 404);
         }
-
         return response()->json($barangMasuk);
     }
 
