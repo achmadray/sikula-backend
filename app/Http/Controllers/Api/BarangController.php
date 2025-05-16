@@ -35,7 +35,6 @@ class BarangController extends Controller
     ], 201);
 }
 
-
     public function show($id)
     {
          $barang = Barang::with(['satuan', 'pengguna'])->findOrFail($id);
