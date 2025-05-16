@@ -19,7 +19,7 @@ class BarangMasukController extends Controller
         $request->validate([
             'id_suplier'     => 'required|exists:suplier,id_suplier',
             'id_barang'      => 'required|exists:barang,id_barang',
-            'id_pengguna'    => 'required|exists:pengguna,id_pengguna',
+            'id_pengguna' => 'required|exists:pengguna,id_pengguna',
             'harga'          => 'required|numeric',
             'jumlah'         => 'required|integer',
             'total_harga'    => 'required|numeric',
