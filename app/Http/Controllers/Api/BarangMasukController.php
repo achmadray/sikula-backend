@@ -9,10 +9,11 @@ use Illuminate\Http\Request;
 class BarangMasukController extends Controller
 {
     public function index()
-    {
-        $barang_masuk = Barang_Masuk::all();
-        return response()->json($barang_masuk);
-    }
+{
+    $barang_masuk = Barang_Masuk::with(['barang', 'suplier'])->get();
+    return response()->json($barang_masuk);
+}
+
 
     public function store(Request $request)
     {
