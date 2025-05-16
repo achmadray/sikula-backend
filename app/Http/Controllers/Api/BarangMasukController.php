@@ -33,14 +33,14 @@ class BarangMasukController extends Controller
 
     public function show($id)
     {
-        $barangMasuk = Barang_Masuk::with(['barang', 'suplier', 'pengguna'])->find($id);
+    $barangMasuk = Barang_Masuk::with(['barang', 'suplier', 'pengguna'])->find($id);
 
-        if (!$barangMasuk) {
-            return response()->json(['message' => 'Barang Masuk not found'], 404);
-        }
-
-        return response()->json($barangMasuk);
+    if (!$barangMasuk) {
+        return response()->json(['message' => 'Data tidak ditemukan'], 404);
     }
+
+    return response()->json($barangMasuk);
+}
 
     public function update(Request $request, $id)
     {

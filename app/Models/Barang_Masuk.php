@@ -15,6 +15,7 @@ class Barang_Masuk extends Model
     protected $fillable = [
         'id_suplier',
         'id_barang',
+        'id_pengguna',
         'harga',
         'jumlah',
         'total_harga',
@@ -31,9 +32,9 @@ class Barang_Masuk extends Model
     {
         return $this->belongsTo(Barang::class, 'id_barang');
     }
-    public function pengguna()
-{
-    return $this->belongsTo(Pengguna::class, 'id_pengguna');
-}
-}
 
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'id_pengguna');   
+    }
+}
