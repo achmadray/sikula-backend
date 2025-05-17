@@ -10,6 +10,7 @@ class Barang_Keluar extends Model
     use HasFactory;
 
     protected $table = 'barang_keluar';
+    protected $primaryKey = 'id_barang_keluar';
 
     protected $fillable = [
         'id_barang',
