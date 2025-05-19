@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 
 class BarangKeluarController extends Controller
 {
-    public function index()
+   public function index()
     {
-        $barang_Keluar = Barang_Keluar::all();
-        return response()->json($barang_Keluar);
+        $barang_keluar = Barang_Keluar::with(['barang', 'pengguna'])->get();
+        return response()->json($barang_keluar);
     }
 
     public function store(Request $request)
