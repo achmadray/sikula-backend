@@ -27,6 +27,7 @@ Route::apiResource('barang_keluar', BarangKeluarController::class);
 Route::apiResource('barang_masuk', BarangMasukController::class);
 Route::apiResource('suplier', SuplierController::class);
 Route::apiResource('transaksi', TransaksiController::class);
+Route::post('/midtrans/callback', [TransaksiController::class, 'callback']);
 Route::apiResource('kategori', KategoriController::class);
 Route::apiResource('menu', MenuController::class);
 Route::apiResource('detail_transaksi', DetailTransaksiController::class);
