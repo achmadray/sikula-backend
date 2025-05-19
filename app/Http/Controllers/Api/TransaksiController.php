@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Transaksi;
-use Illuminate\Http\Request;
 use Midtrans\Snap;
 use Midtrans\Config;
+use App\Models\Transaksi;
+use Illuminate\Http\Request;
+use App\Models\Detail_Transaksi;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class TransaksiController extends Controller
 {
@@ -26,23 +28,18 @@ class TransaksiController extends Controller
 
     public function index()
     {
-        return response()->json(Transaksi::all());
+        $transaksi = Transaksi::with(['pengguna'])->get();
+        return response()->json($transaksi);
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_pengguna' => 'required|exists:pengguna,id_pengguna',
-            'nama_order' => 'required|string',
-            'metode_pembayaran' => 'required|string',
-            'total_transaksi' => 'required|numeric',
-        ]);
+{
+    DB::beginTransaction();
 
-        $noUrut = $this->generateNoUrut();
-
+    try {
         $transaksi = Transaksi::create([
             'id_pengguna' => $request->id_pengguna,
-            'no_urut' => $noUrut,
+            'no_urut' => $this->generateNoUrut(),
             'nama_order' => $request->nama_order,
             'metode_pembayaran' => $request->metode_pembayaran,
             'total_transaksi' => $request->total_transaksi,
@@ -50,23 +47,38 @@ class TransaksiController extends Controller
             'status_pembayaran' => 'pending',
         ]);
 
+        foreach ($request->items as $item) {
+            Detail_Transaksi::create([
+                'id_transaksi' => $transaksi->id_transaksi,
+                'id_menu' => $item['id_menu'],
+                'jumlah' => $item['jumlah'],
+                'total_harga' => $item['total_harga'],
+            ]);
+        }
+
         $snapToken = Snap::getSnapToken([
             'transaction_details' => [
-                'order_id' => $noUrut,
-                'gross_amount' => $request->total_transaksi,
+                'order_id' => $transaksi->no_urut,
+                'gross_amount' => $transaksi->total_transaksi,
             ],
             'customer_details' => [
-                'first_name' => $request->nama_order,
+                'first_name' => $transaksi->nama_order,
             ],
             'enabled_payments' => ['gopay', 'bank_transfer', 'shopeepay', 'indomaret', 'qris'],
         ]);
+
+        DB::commit();
 
         return response()->json([
             'message' => 'Transaksi berhasil dibuat.',
             'transaksi' => $transaksi,
             'snap_token' => $snapToken,
         ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['message' => 'Terjadi kesalahan saat menyimpan transaksi.'], 500);
     }
+}
 
     public function show($id)
     {
