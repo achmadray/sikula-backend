@@ -14,29 +14,42 @@ class AkunController extends Controller
         return response()->json(Akun::all());
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'username' => 'required|unique:akun,username',
-            'password' => 'required|min:6',
-            'level' => 'required|in:admin,pegawai,kasir,pengelola_gudang',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'username' => 'required|unique:akun,username',
+        'password' => 'required|min:6',
+        'level' => 'required|in:admin,pegawai,kasir,pengelola_gudang',
+        'nama_pengguna' => 'required|string',
+        'email' => 'required|email',
+        'no_telpon' => 'required|string',
+    ]);
 
-        $akun = Akun::create([
-            'username' => $request->username,
-            'password' => Hash::make($request->password),
-            'level' => $request->level,
-        ]);
+    $akun = Akun::create([
+        'username' => $request->username,
+        'password' => Hash::make($request->password),
+        'level' => $request->level,
+    ]);
 
-        return response()->json([
-            'message' => 'Akun berhasil dibuat',
-            'data' => $akun
-        ], 201);
-    }
+    $pengguna = $akun->pengguna()->create([
+        'nama_pengguna' => $request->nama_pengguna,
+        'email' => $request->email,
+        'no_telpon' => $request->no_telpon,
+    ]);
+
+    return response()->json([
+        'message' => 'Akun dan Pengguna berhasil dibuat',
+        'akun' => $akun,
+        'pengguna' => $pengguna,
+    ], 201);
+}
+
+
 
     public function show($id)
     {
-        $akun = Akun::find($id);
+        $akun = Akun::with('pengguna')->find($id);
+
         if (!$akun) {
             return response()->json(['message' => 'Akun tidak ditemukan'], 404);
         }

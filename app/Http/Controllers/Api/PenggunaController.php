@@ -13,29 +13,29 @@ class PenggunaController extends Controller
         return response()->json(Pengguna::with('akun')->get());
     }
 
-    public function store(Request $request)
-{
-    try {
-        $request->validate([
-            'nama_pengguna' => 'required|string|max:100',
-            'email' => 'required|email|unique:pengguna,email',
-            'id_akun' => 'required|exists:akun,id_akun',
-            'no_telpon' => 'nullable|string|max:20',
-        ]);
+//     public function store(Request $request)
+// {
+//     try {
+//         $request->validate([
+//             'nama_pengguna' => 'required|string|max:100',
+//             'email' => 'required|email|unique:pengguna,email',
+//             'id_akun' => 'required|exists:akun,id_akun',
+//             'no_telpon' => 'nullable|string|max:20',
+//         ]);
 
-        $pengguna = Pengguna::create($request->all());
+//         $pengguna = Pengguna::create($request->all());
 
-        return response()->json([
-            'message' => 'Pengguna berhasil ditambahkan',
-            'data' => $pengguna
-        ], 201);
+//         return response()->json([
+//             'message' => 'Pengguna berhasil ditambahkan',
+//             'data' => $pengguna
+//         ], 201);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-        ], 500);
-    }
-}
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+//         ], 500);
+//     }
+// }
 
 public function profil($id_akun)
 {
@@ -71,7 +71,7 @@ public function profil($id_akun)
         $request->validate([
     'nama_pengguna' => 'required|string|max:100',
     'email' => 'required|email|unique:pengguna,email,' . $id . ',id_pengguna',
-    'id_akun' => 'required|exists:akun,id_akun', // ✅ perbaiki di sini
+    'id_akun' => 'required|exists:akun,id_akun',
     'no_telpon' => 'nullable|string|max:20',
 ]);
 
