@@ -21,11 +21,12 @@ class DetailTransaksiController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'id_menu' => 'required|exists:menu,id_menu',
-            'id_transaksi' => 'required|exists:transaksi,id_transaksi',
-            'jumlah' => 'required|integer|min:1',
-        ]);
+       $request->validate([
+    'id_transaksi' => 'required|integer|exists:transaksi,id_transaksi',
+    'id_menu' => 'required|integer|exists:menu,id_menu',
+    'jumlah' => 'required|integer|min:1',
+    'total_harga' => 'required|numeric|min:0',
+]);
 
         $menu = Menu::findOrFail($request->id_menu);
         $totalHarga = $menu->harga * $request->jumlah;

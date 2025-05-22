@@ -29,7 +29,8 @@ class Transaksi extends Model
     }
 
     public function detailTransaksi()
-    {
-        return $this->hasMany(Detail_Transaksi::class, 'id_transaksi');
-    }
+{
+    return $this->hasMany(Detail_Transaksi::class, 'id_transaksi');
+}
+
 }
