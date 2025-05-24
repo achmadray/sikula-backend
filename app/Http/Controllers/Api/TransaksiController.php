@@ -8,13 +8,17 @@ use App\Models\Detail_Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class TransaksiController extends Controller
 {
-    // Constructor tetap ada kalau perlu, tapi tanpa konfigurasi Midtrans
     public function __construct()
     {
-        // Kosongkan atau hapus konfigurasi Midtrans
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = config('midtrans.is_sanitized');
+        Config::$is3ds = config('midtrans.is_3ds');
     }
 
     private function generateNoUrut()
@@ -78,7 +82,7 @@ class TransaksiController extends Controller
                 'nama_order' => $request->nama_order,
                 'metode_pembayaran' => $request->metode_pembayaran,
                 'total_harga' => $request->total_transaksi,
-                'status_pembayaran' => 'pending', // tetap default pending
+                'status_pembayaran' => 'pending',
                 'tanggal_transaksi' => date('Y-m-d'),
             ]);
 
@@ -91,8 +95,20 @@ class TransaksiController extends Controller
                 ]);
             }
 
-            // Bagian Midtrans Snap Token dimatikan / dihapus
-            // Jadi tidak ada kode Midtrans sama sekali di sini
+            if (strtolower($request->metode_pembayaran) === 'midtrans') {
+                $snapToken = Snap::getSnapToken([
+                    'transaction_details' => [
+                        'order_id' => $noUrut,
+                        'gross_amount' => $request->total_transaksi,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $request->nama_order,
+                    ],
+                ]);
+
+                $transaksi->snap_token = $snapToken;
+                $transaksi->save();
+            }
 
             DB::commit();
 
@@ -182,11 +198,35 @@ class TransaksiController extends Controller
         }
     }
 
-    // Method notifikasi Midtrans dimatikan sementara
     public function notification(Request $request)
     {
-        return response()->json([
-            'message' => 'Fitur notifikasi Midtrans dinonaktifkan sementara.',
-        ], 503);
+        try {
+            $notification = new \Midtrans\Notification();
+
+            $orderId = $notification->order_id;
+            $transactionStatus = $notification->transaction_status;
+
+            $transaksi = Transaksi::where('no_urut', $orderId)->first();
+
+            if (!$transaksi) {
+                return response()->json(['message' => 'Transaksi tidak ditemukan'], 404);
+            }
+
+            if (in_array($transactionStatus, ['capture', 'settlement'])) {
+                $transaksi->status_pembayaran = 'lunas';
+            } elseif ($transactionStatus === 'pending') {
+                $transaksi->status_pembayaran = 'pending';
+            } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                $transaksi->status_pembayaran = 'gagal';
+            }
+
+            $transaksi->save();
+
+            return response()->json(['message' => 'Status pembayaran diperbarui']);
+        } catch (\Exception $e) {
+            Log::error('Error notification Midtrans: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Error processing notification'], 500);
+        }
     }
 }
