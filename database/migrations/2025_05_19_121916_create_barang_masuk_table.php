@@ -27,6 +27,7 @@ class CreateBarangMasukTable extends Migration
             $table->foreign('id_barang')
                   ->references('id_barang')->on('barang')
                   ->onDelete('cascade');
+                  
             $table->foreign('id_pengguna')
                   ->references('id_pengguna')->on('pengguna')
                   ->onDelete('cascade');

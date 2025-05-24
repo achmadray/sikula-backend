@@ -1,9 +1,8 @@
 <?php
-
 return [
-    'server_key' => env('MIDTRANS_SERVER_KEY'),
-    'client_key' => env('MIDTRANS_CLIENT_KEY'),
-    'is_production' => env('MIDTRANS_PRODUCTION', false),
-    'sanitized' => true,
-    '3ds' => true,
+    'server_key' => env('MIDTRANS_SERVER_KEY', ''),
+    'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+    'is_sanitized' => env('MIDTRANS_IS_SANITIZED', true),
+    'is_3ds' => env('MIDTRANS_IS_3DS', true),
+    'enabled_payments' => ['gopay', 'bank_transfer', 'shopeepay', 'indomaret', 'qris'],
 ];

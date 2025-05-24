@@ -14,7 +14,6 @@ class Transaksi extends Model
 
 
     protected $fillable = [
-        'id_pengguna',
         'no_urut',
         'nama_order',
         'metode_pembayaran',
@@ -22,11 +21,6 @@ class Transaksi extends Model
         'tanggal_transaksi',
         'status_pembayaran',
     ];
-
-    public function pengguna()
-    {
-        return $this->belongsTo(Pengguna::class, 'id_pengguna');
-    }
 
     public function detailTransaksi()
 {

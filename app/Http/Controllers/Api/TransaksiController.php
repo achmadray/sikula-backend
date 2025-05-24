@@ -2,45 +2,33 @@
 
 namespace App\Http\Controllers\Api;
 
-use Midtrans\Snap;
-use Midtrans\Config;
+use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\Detail_Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 
 class TransaksiController extends Controller
 {
+    // Constructor tetap ada kalau perlu, tapi tanpa konfigurasi Midtrans
     public function __construct()
     {
-        // Set konfigurasi Midtrans
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = config('midtrans.is_sanitized');
-        Config::$is3ds = config('midtrans.is_3ds');
+        // Kosongkan atau hapus konfigurasi Midtrans
     }
 
-    // Generate nomor urut transaksi unik berdasarkan tanggal
     private function generateNoUrut()
     {
         $date = date('Ymd');
         $latest = Transaksi::where('no_urut', 'like', "TRX-$date-%")
-                           ->orderBy('id_transaksi', 'desc')
-                           ->first();
+            ->orderBy('id_transaksi', 'desc')
+            ->first();
 
-        if (!$latest) {
-            $number = 1;
-        } else {
-            $lastNumber = intval(substr($latest->no_urut, strrpos($latest->no_urut, '-') + 1));
-            $number = $lastNumber + 1;
-        }
+        $number = $latest ? intval(substr($latest->no_urut, strrpos($latest->no_urut, '-') + 1)) + 1 : 1;
 
         return 'TRX-' . $date . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
-    // Tampilkan semua transaksi beserta detail menu
     public function index()
     {
         $transaksis = Transaksi::with('detailTransaksi.menu')->get();
@@ -51,7 +39,6 @@ class TransaksiController extends Controller
         ]);
     }
 
-    // Detail transaksi berdasarkan id
     public function show($id)
     {
         $transaksi = Transaksi::with('detailTransaksi.menu')->find($id);
@@ -69,31 +56,30 @@ class TransaksiController extends Controller
         ]);
     }
 
-    // Simpan transaksi baru beserta detail dan generate snap token Midtrans
     public function store(Request $request)
     {
         $request->validate([
-            'id_pengguna' => 'required|integer|exists:pengguna,id_pengguna',
-            'nama_order' => 'required|string|max:255',
-            'metode_pembayaran' => 'required|string|max:50',
-            'total_transaksi' => 'required|numeric|min:0',
+            'nama_order' => 'required|string',
+            'metode_pembayaran' => 'required|string',
+            'total_transaksi' => 'required|numeric',
             'items' => 'required|array|min:1',
-            'items.*.id_menu' => 'required|integer|exists:menu,id_menu',
+            'items.*.id_menu' => 'required|exists:menu,id_menu',
             'items.*.jumlah' => 'required|integer|min:1',
-            'items.*.total_harga' => 'required|numeric|min:0',
+            'items.*.total_harga' => 'required|numeric',
         ]);
 
         DB::beginTransaction();
 
         try {
+            $noUrut = $this->generateNoUrut();
+
             $transaksi = Transaksi::create([
-                'id_pengguna' => $request->id_pengguna,
-                'no_urut' => $this->generateNoUrut(),
+                'no_urut' => $noUrut,
                 'nama_order' => $request->nama_order,
                 'metode_pembayaran' => $request->metode_pembayaran,
-                'total_transaksi' => $request->total_transaksi,
-                'tanggal_transaksi' => now(),
-                'status_pembayaran' => 'pending',
+                'total_harga' => $request->total_transaksi,
+                'status_pembayaran' => 'pending', // tetap default pending
+                'tanggal_transaksi' => date('Y-m-d'),
             ]);
 
             foreach ($request->items as $item) {
@@ -101,48 +87,29 @@ class TransaksiController extends Controller
                     'id_transaksi' => $transaksi->id_transaksi,
                     'id_menu' => $item['id_menu'],
                     'jumlah' => $item['jumlah'],
-                    'total_harga' => $item['total_harga'],
+                    'sub_total' => $item['total_harga'],
                 ]);
             }
 
-            // Generate snap token Midtrans
-            // $snapToken = Snap::getSnapToken([
-            //     'transaction_details' => [
-            //         'order_id' => $transaksi->no_urut,
-            //         'gross_amount' => $transaksi->total_transaksi,
-            //     ],
-            //     'customer_details' => [
-            //         'first_name' => $transaksi->nama_order,
-            //     ],
-            //     'enabled_payments' => ['gopay', 'bank_transfer', 'shopeepay', 'indomaret', 'qris'],
-            // ]);
+            // Bagian Midtrans Snap Token dimatikan / dihapus
+            // Jadi tidak ada kode Midtrans sama sekali di sini
 
             DB::commit();
 
-            // Load relasi agar response lengkap
-            $transaksi->load('detailTransaksi.menu');
-
             return response()->json([
-                'success' => true,
-                'message' => 'Transaksi berhasil dibuat.',
-                'data' => [
-                    'transaksi' => $transaksi,
-                    // 'snap_token' => $snapToken,
-                ],
-            ]);
+                'message' => 'Transaksi berhasil disimpan.',
+                'data' => $transaksi,
+            ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error tambah transaksi: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             return response()->json([
-                'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan transaksi.',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    // Update transaksi (tidak termasuk detail transaksi)
     public function update(Request $request, $id)
     {
         $transaksi = Transaksi::find($id);
@@ -162,12 +129,12 @@ class TransaksiController extends Controller
         ]);
 
         try {
-            $transaksi->update($request->only([
-                'nama_order',
-                'metode_pembayaran',
-                'total_transaksi',
-                'status_pembayaran',
-            ]));
+            $transaksi->update([
+                'nama_order' => $request->nama_order ?? $transaksi->nama_order,
+                'metode_pembayaran' => $request->metode_pembayaran ?? $transaksi->metode_pembayaran,
+                'total_harga' => $request->total_transaksi ?? $transaksi->total_harga,
+                'status_pembayaran' => $request->status_pembayaran ?? $transaksi->status_pembayaran,
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -176,6 +143,7 @@ class TransaksiController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error update transaksi: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memperbarui transaksi',
@@ -184,7 +152,6 @@ class TransaksiController extends Controller
         }
     }
 
-    // Hapus transaksi beserta detail terkait
     public function destroy($id)
     {
         $transaksi = Transaksi::find($id);
@@ -197,10 +164,7 @@ class TransaksiController extends Controller
         }
 
         try {
-            // Hapus detail transaksi dulu (cascade bisa dipasang di model)
             $transaksi->detailTransaksi()->delete();
-
-            // Baru hapus transaksi
             $transaksi->delete();
 
             return response()->json([
@@ -209,11 +173,20 @@ class TransaksiController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error hapus transaksi: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus transaksi',
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    // Method notifikasi Midtrans dimatikan sementara
+    public function notification(Request $request)
+    {
+        return response()->json([
+            'message' => 'Fitur notifikasi Midtrans dinonaktifkan sementara.',
+        ], 503);
     }
 }
