@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -27,4 +28,14 @@ class Handler extends ExceptionHandler
             //
         });
     }
+   protected function unauthenticated($request, AuthenticationException $exception)
+{
+    // Jika permintaan adalah API, kirim response JSON
+    if ($request->expectsJson() || $request->is('api/*')) {
+        return response()->json(['message' => 'Unauthenticated.'], 401);
+    }
+
+    // Jangan redirect ke route 'login' karena tidak ada di backend API
+    return response()->json(['message' => 'Unauthenticated. No login route available.'], 401);
+}
 }

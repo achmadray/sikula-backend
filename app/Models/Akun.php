@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;  // perhatikan extend ini
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Akun extends Model
+class Akun extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
@@ -16,10 +17,28 @@ class Akun extends Model
     protected $fillable = [
         'username',
         'password',
-        'level'];
+        'level'
+    ];
 
+    protected $hidden = [
+        'password',
+    ];
+
+    // JWTSubject interface methods
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();  // primary key
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    // Relasi
     public function pengguna()
     {
         return $this->hasOne(Pengguna::class, 'id_akun', 'id_akun');
     }
 }
+

@@ -16,10 +16,14 @@ use App\Http\Controllers\Api\BarangMasukController;
 use App\Http\Controllers\Api\BarangKeluarController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\DetailTransaksiController;
+use App\Http\Controllers\AuthController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/register', [AuthController::class, 'register']);
+// Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/pengguna/profil/{id_akun}', [PenggunaController::class, 'profil']);
 Route::apiResource('akun', AkunController::class);
