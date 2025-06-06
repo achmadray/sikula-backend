@@ -18,12 +18,13 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\DetailTransaksiController;
 use App\Http\Controllers\AuthController;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::post('/register', [AuthController::class, 'register']);
-// Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:api')->post('/auth/me', [AuthController::class, 'me']);
 
 Route::get('/pengguna/profil/{id_akun}', [PenggunaController::class, 'profil']);
 Route::apiResource('akun', AkunController::class);

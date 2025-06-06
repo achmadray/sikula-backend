@@ -44,7 +44,7 @@ class Kernel extends HttpKernel
         'api' => [
     \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
     \Illuminate\Routing\Middleware\SubstituteBindings::class,
-    'auth:api', // Gunakan guard JWT yang sudah kamu definisikan di config/auth.php
+    // 'auth:api', // Gunakan guard JWT yang sudah kamu definisikan di config/auth.php
 ],
     ];
 
