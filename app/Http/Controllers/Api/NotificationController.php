@@ -12,26 +12,24 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $batasStok = 5;
-
-        $stok_hampir_habis = Barang::with('satuan')
-            ->where('stok', '<=', $batasStok)
+        $stokHampirHabis = Barang::with('satuan')
+            ->where('stok', '<=', 5)
             ->get();
 
-        $barang_masuk_terbaru = Barang_Masuk::with('barang')
-            ->orderBy('tanggal_masuk', 'desc')
+        $barangMasukTerbaru = Barang_Masuk::with('barang.satuan')
+            ->orderByDesc('tanggal_masuk')
             ->limit(5)
             ->get();
 
-        $barang_keluar_terbaru = Barang_Keluar::with('barang')
-            ->orderBy('tanggal_keluar', 'desc')
+        $barangKeluarTerbaru = Barang_Keluar::with('barang.satuan')
+            ->orderByDesc('tanggal_keluar')
             ->limit(5)
             ->get();
 
         return response()->json([
-            'stok_hampir_habis' => $stok_hampir_habis,
-            'barang_masuk_terbaru' => $barang_masuk_terbaru,
-            'barang_keluar_terbaru' => $barang_keluar_terbaru,
+            'stok_hampir_habis' => $stokHampirHabis,
+            'barang_masuk_terbaru' => $barangMasukTerbaru,
+            'barang_keluar_terbaru' => $barangKeluarTerbaru,
         ]);
     }
 }
